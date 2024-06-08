@@ -2,4 +2,6 @@ make scripts warn that you need to be in the correct tab (Checks, Deposits) and 
 
 if we have one massive script to do everything it will have to pause while the user switches tabs or else look into having AHK switch tabs
 
+before marking a tx batch as entered, we could ask the user if everything was ok and then only mark them if it was
+
 which file has the LATEST AND BEST CODE: loanacct_withdrawals.rb
