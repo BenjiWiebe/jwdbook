@@ -1,0 +1,3 @@
+make scripts warn that you need to be in the correct tab (Checks, Deposits) and also have no data already entered (i.e. cursor in the date field)
+
+if we have one massive script to do everything it will have to pause while the user switches tabs or else look into having AHK switch tabs
