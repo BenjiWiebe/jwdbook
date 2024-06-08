@@ -2,3 +2,4 @@ bank.db
 *.out.ahk
 export*.csv
 *~
+jobs.rb
