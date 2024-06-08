@@ -1,0 +1,8 @@
+# A list of types of transactions to process
+jobs = [
+  {where: "desc like 'TRANSFERRED TO LOAN ACCT %'", account: 'MY BANK', atigd: '1111', ent: '2222', ext: '333', type: :withdrawal},
+  {where: "desc like 'MCDONALDS%'", account: 'FAST FOOD', atigd: '9999', ent: '2222', ext: '333', type: :withdrawal},
+  {where: "desc = 'ACH DEPOSIT' and amount > 500", account: 'PAYCHECK', atigd: '0000', ent: '0000', ext: '000', type: :deposit}
+]
+
+
