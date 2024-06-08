@@ -67,6 +67,6 @@ Sleep 250
 AHK
   txes_written += 1
 end
-#db.execute sql_mark_entered
+db.execute sql_mark_entered
 
 puts "Wrote #{txes_written} to #{output_filename} and marked them as entered."
