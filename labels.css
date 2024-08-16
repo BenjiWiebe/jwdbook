@@ -1,0 +1,69 @@
+
+.labels_page {
+	width: 8.5in;
+	margin: 0;
+	display: grid;
+	/* left gutter | label | center gutter | label | right gutter */
+	grid-template-columns: 0.1875in 4in 0.125in 4in 0.1875in;
+	/* top gutter | labels x 5 | bottom gutter */
+	grid-template-rows: 0.5in repeat(5, 2in) 0.5in;
+	gap: 0;
+
+	.top-gutter {
+		grid-column: 1 / 6;
+		grid-row: 1;
+	}
+
+	.bottom-gutter {
+		grid-column: 1 / 6;
+		grid-row: 7;
+		page-break-after: always;
+	}
+
+	.left-gutter {
+		grid-column-start: 1;
+	}
+
+	.center-gutter {
+		grid-column-start: 3;
+	}
+
+	.right-gutter {
+		grid-column-start: 5;
+	}
+
+	.label-4x2 {
+		outline: 1px dotted;
+		text-align: center;
+		display: flex;
+		flex-flow: column wrap;
+		img {
+				margin: 10px 1px 1px 1px;
+				width: 100%;
+				height: 1in;
+		}
+		.gsdata {
+			font-size: 14px;
+		}
+		.gsdetails {
+			font-size: 12px;
+			white-space: preserve-spaces;
+		}
+		.gstitle {
+			/*! text-transform: uppercase; */
+		}
+		.gsdesc {
+			font-size: 12px;
+		}
+		.labelnumber {
+			position: absolute;
+			font-size: 12px;
+			margin-left: 7px;
+			margin-top: 5px;
+		}
+	}
+}
+@media print {
+	.label-4x2 {outline: none !important;} /* We need this !important because the earlier rule is more specific */
+	@page { margin: 0 !important;}
+}

@@ -5,6 +5,7 @@ require 'barby/outputter/png_outputter'
 require 'barby/outputter/html_outputter'
 require 'pry'
 require 'date'
+require 'erb'
 
 class GFI_code
   attr_accessor :gtin14, :date_type, :weight, :batch
@@ -17,14 +18,23 @@ class GFI_code
   POUNDS = '320'
 
   def initialize
-    # calculate 6 months from today
-    d = Date.today >> 6
-    # YYMMDD
-    result = d.year.to_s[2..3]
-    result += d.month.to_s
-    result += d.day.to_s
-    @date = result
-    @date_type = BEST_BEFORE
+  end
+
+  def set_date(date_type, date=nil)
+    @date_type = date_type
+    if date_type == BEST_BEFORE
+      # calculate 6 months from today
+      d = Date.today >> 6
+    else
+      d = date
+    end
+    # YYMMDD format
+    yy = d.year.to_s[2..3]
+    mm = d.month.to_s
+    dd = d.day.to_s
+    mm.prepend('0') if mm.length == 1
+    dd.prepend('0') if dd.length == 1
+    @date = yy + mm + dd
   end
 
   # format_weight('22.50', POUNDS, textual: true)
@@ -33,6 +43,7 @@ class GFI_code
   # textual: true surrounds the prefix with parentheses for printing beneath the barcode
   # textual: false (default) does not.
   def format_weight(weight, type, textual: false)
+    weight = weight.to_s
     parts = weight.split('.')
     weight = weight.tr('.', '')
     deccount = '0'
@@ -57,7 +68,7 @@ class GFI_code
     else
       p1 = p2 = ''
     end
-    return p1 + '01' + p2 + @gtin14 + p1 + @date_type + p2 + @date + format_weight(@weight, POUNDS, textual: textual) + p1 + '10' + p2 + @batch
+    return p1 + '01' + p2 + @gtin14 + p1 + @date_type + p2 + @date + format_weight(@weight, POUNDS, textual: textual) + p1 + '10' + p2 + @batch.to_s
   end
   def data
     return _data(textual: false)
@@ -67,13 +78,51 @@ class GFI_code
   end
 end
 
-g = GFI_code.new
-g.gtin14 = '00850059295014'
-g.weight = '22.50'
-g.batch = '2315'
+GTINS = { CRR40LB: "90850059295451"}
+
+batch_weights={ 2126 => ["2024-08-15", 40,41,42,43], 2143 => ["2021-01-01", 39.9,39.8,39.7]}
+product = :CRR40LB
 
 
-barcode = Barby::Code128.new(Barby::Code128::FNC1 + g.data)
-out = Barby::PngOutputter.new(barcode)
-File.open('barcode.png', 'wb'){|f| f.write out.to_png }
-puts g.text
+label_contents=[]
+label_index = 0
+batch_weights.each_pair do |batch,weights|
+  batch_date = Date.parse(weights.shift)
+  weights.each do |weight|
+    g = GFI_code.new
+    g.set_date(GFI_code::PRODUCTION, batch_date)
+    g.gtin14 = GTINS[product]
+    g.weight = weight
+    g.batch = batch
+
+    barcode_image_file = "barcode_images/barcode#{label_index}.png"
+
+    barcode = Barby::Code128.new(Barby::Code128::FNC1 + g.data)
+    out = Barby::PngOutputter.new(barcode)
+    out.xdim=2
+    out.ydim=out.xdim
+    out.height=20
+    out.margin=0
+    File.open(barcode_image_file, 'wb'){|f| f.write out.to_png }
+    puts "Generated #{barcode_image_file}: #{g.text}"
+
+    make_date = batch_date.strftime('%b %e, %Y')
+    padded_weight = format('%.2f', weight.to_f)
+
+    label_template = ERB.new File.read('label_template.erb.html')
+    label_contents << label_template.result(binding)
+    label_index += 1
+  end
+end
+
+
+f=File.open('template.html')
+outfile=File.open('printable.html','w')
+f.each_line do |line|
+  if /^[[:space:]]*@label(\d+)@[[:space:]]*$/ =~ line
+    outfile.write label_contents[$1.to_i]
+  else
+    outfile.write line
+  end
+end
+f.close
