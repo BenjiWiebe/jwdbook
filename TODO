@@ -1,9 +1,8 @@
-make scripts warn that you need to be in the correct tab (Checks, Deposits) and also have no data already entered (i.e. cursor in the date field)
+make script check which field is selected by default, might be date field!!
+make script check if the print checkbox is selected, it shouldn't be!!
 
 if we have one massive script to do everything it will have to pause while the user switches tabs or else look into having AHK switch tabs -
-	looks like ahk cant detect the tab directly. we could make sure farmbooks is full screen(maybe??) and then click at the right pixel offsets.
-	we could also check the color of the background - the deposit tab and the check tab have a different background color.
-	probably best to prompt the user though.
+	looks like ahk cant detect the tab directly. we could make sure farmbooks is full screen(maybe??) and then click at the right pixel offsets. EDIT I think it can detect it automatically
 
 before marking a tx batch as entered, we could ask the user if everything was ok and then only mark them if it was
 
