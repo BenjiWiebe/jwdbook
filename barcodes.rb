@@ -78,9 +78,20 @@ class GFI_code
   end
 end
 
-GTINS = { CRR40LB: "90850059295451"}
+GTINS = {
+  CRR40LB: {
+    gtin14: "90850059295451",
+    title: "COTTONWOOD RIVER RESERVE",
+    subtitle: "1 x approx. 40LB block"
+  },
+  CRR2X5LB: {
+    gtin14: "90850059295000",
+    title: "COTTONWOOD RIVER RESERVE",
+    subtitle: "2 x approx. 5LB blocks"
+  }
+}
 
-batch_weights={ 2126 => ["2024-08-15", 40,41,42,43], 2143 => ["2021-01-01", 39.9,39.8,39.7]}
+batch_weights={ 2126 => ["2024-08-15", 10,10.1,10.2,10.3], 2143 => ["2021-01-01", 9.99,9.98,9.97]}
 product = :CRR40LB
 
 
@@ -91,7 +102,7 @@ batch_weights.each_pair do |batch,weights|
   weights.each do |weight|
     g = GFI_code.new
     g.set_date(GFI_code::PRODUCTION, batch_date)
-    g.gtin14 = GTINS[product]
+    g.gtin14 = GTINS[product][:gtin14]
     g.weight = weight
     g.batch = batch
 
@@ -108,6 +119,8 @@ batch_weights.each_pair do |batch,weights|
 
     make_date = batch_date.strftime('%b %e, %Y')
     padded_weight = format('%.2f', weight.to_f)
+    title = GTINS[product][:title]
+    subtitle = GTINS[product][:subtitle]
 
     label_template = ERB.new File.read('label_template.erb.html')
     label_contents << label_template.result(binding)
