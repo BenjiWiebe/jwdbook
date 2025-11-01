@@ -14,6 +14,11 @@ gets
 
 txes_written = 0
 f = File.open(output_filename, "w")
+f.puts <<-AHK
+Result := MsgBox("Do you want to auto-enter transactions into FarmBooks?","Auto-enter?", "YesNo Icon! Default2")
+if not (Result = "Yes")
+  ExitApp
+AHK
 f.puts 'Esc::ExitApp'
 f.puts 'WinWait "FarmBooks -"'
 f.puts 'WinActivate "FarmBooks -"'
