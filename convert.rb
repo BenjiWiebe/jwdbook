@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 require 'sqlite3'
-
+#converts dates from raw_txes and inserts to txes
+# from 6/20/2024 to 20240620
 db = SQLite3::Database.open 'bank.db'
 db.results_as_hash = true
 db.execute "create table if not exists raw_txes (date text,refno text,amount int,type text,desc text)"
